@@ -31,8 +31,10 @@ export default function UserPage() {
   const fetchProfile = async (username) => {
     setLoading(true);
     try {
-      const response = await axios.get(`/api/users?username=${username}`); // Make GET request to backend
-      setProfile(response.data.profile || response.data.profiles[0]); // Set profile data
+      const response = await axios.get(
+        `/api/users/profile?username=${username}`
+      ); // Make GET request to backend
+      setProfile(response.data.user || {}); // Adjusted response handling to match "user"
       setLoading(false);
     } catch (error) {
       setError("Error loading profile data. Please try again later.");
@@ -117,15 +119,17 @@ export default function UserPage() {
             {/* Bank Name */}
             <div className="bg-green-100 text-black rounded-lg p-4 shadow-md">
               <p className="text-base font-medium">
-                <span className="text-green-700 font-bold">Bank Name:</span>{" "}
-                {bankName}
+                <span className="text-green-700 capitalize font-bold">
+                  Bank Name:
+                </span>{" "}
+                <span className="capitalize">{bankName}</span>
               </p>
             </div>
 
             {/* Account Number */}
             <div className="bg-green-100 text-black rounded-lg p-4 shadow-md flex items-center justify-between">
               <p className="text-base font-medium">
-                <span className="text-green-700 font-bold">
+                <span className="text-green-700  font-bold">
                   Account Number:
                 </span>{" "}
                 {accountNumber}
@@ -142,7 +146,7 @@ export default function UserPage() {
           {/* Hype Text */}
           <p className="text-center text-white my-6">
             "No reason am, just run am! Bless @{username} with funds, jollof go
-            land and your own blessings go double!
+            land and your own blessings go double!"
           </p>
 
           {/* Sent Funds Button */}
