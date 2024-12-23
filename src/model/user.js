@@ -28,6 +28,7 @@ const UserSchema = new mongoose.Schema(
     timestamps: true, // Automatically adds createdAt and updatedAt fields
   }
 );
+// set
 
 // Check if the model is already compiled to avoid re-compiling in development
 export default mongoose.models.User || mongoose.model("User", UserSchema);
