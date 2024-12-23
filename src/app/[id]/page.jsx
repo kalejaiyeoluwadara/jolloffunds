@@ -1,7 +1,7 @@
 "use client";
 import { images } from "@/app/utils";
 import React, { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FaMoneyBillWave, FaUserCircle } from "react-icons/fa";
 import { FiCopy } from "react-icons/fi";
 import toast, { Toaster } from "react-hot-toast";
@@ -10,7 +10,7 @@ import Image from "next/image";
 export default function UserPage() {
   const pathname = usePathname();
   const [username, setUsername] = useState(null);
-
+  const router = useRouter();
   useEffect(() => {
     const id = pathname.split("/")[1];
     if (id) setUsername(id);
@@ -21,13 +21,16 @@ export default function UserPage() {
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
-    toast.success("Details don copy! Share di vibes 🎉");
+    toast.success("Aza copied!🎉");
   };
 
   const handleSentFunds = () => {
     toast("God bless your hand! Jollof don dey flow 🍛", {
       icon: "💃",
     });
+    setTimeout(() => {
+      router.push("/completed");
+    }, 1000);
   };
 
   if (!username) {
@@ -40,9 +43,9 @@ export default function UserPage() {
 
   return (
     <div className="h-screen w-screen bg-green-50 text-white flex flex-col items-center justify-center p-6 relative">
-      <Toaster position="top-right" />
+      <Toaster position="top-center" />
       <Image
-        className="absolute h-full w-full top-0 left-0 object-center"
+        className="absolute h-full w-full top-0 left-0 object-cover"
         src={images.aza}
         alt="bac"
       />
@@ -88,8 +91,8 @@ export default function UserPage() {
 
         {/* Hype Text */}
         <p className="text-center text-white my-6">
-          "Abeg, no dull! Bless @{username} account now. Jollof go run and God
-          go butter your bread! 🤑"
+          "No reason am, just run am! Bless @{username} with funds, jollof go
+          land and your own blessings go double!
         </p>
 
         {/* Sent Funds Button */}
@@ -99,11 +102,6 @@ export default function UserPage() {
         >
           <FaMoneyBillWave className="text-2xl" /> I Don Send Funds
         </button>
-      </div>
-
-      {/* Background Layer */}
-      <div className="absolute inset-0 -z-10">
-        <div className="h-full w-full bg-gradient-to-r from-green-200 via-white to-green-100"></div>
       </div>
     </div>
   );

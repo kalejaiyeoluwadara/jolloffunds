@@ -29,9 +29,6 @@ export default function Page() {
               placeholder="@your_username"
               className="w-full bg-gray-100 text-gray-800 border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-red-500"
             />
-            <button className="absolute top-2/4 right-3 transform -translate-y-2/4 text-red-600">
-              Copy
-            </button>
           </div>
         </div>
 
@@ -66,7 +63,7 @@ export default function Page() {
           onClick={() => {
             router.push("/share");
           }}
-          className="bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-6 rounded-lg w-full transition duration-300"
+          className="bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-6 rounded-lg w-full transition duration-300"
         >
           Save Profile
         </button>
