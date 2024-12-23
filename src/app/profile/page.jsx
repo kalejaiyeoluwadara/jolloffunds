@@ -33,7 +33,7 @@ export default function Page() {
     try {
       // Sending POST request to create profile
       const response = await axios.post(
-        "https://desserts-backend-u69l.onrender.com/api/users",
+        "https://desserts-backend-u69l.onrender.com/api/v1/users",
         {
           username,
           bankName,

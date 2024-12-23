@@ -82,7 +82,7 @@ export default function UserPage() {
 
   // Define avatars (images.hero1, images.hero2, etc.)
   const avatars = [
-    images.hero1,
+    images.hero,
     images.hero2,
     images.hero3,
     images.hero4,
