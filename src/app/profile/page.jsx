@@ -1,9 +1,11 @@
+"use client";
 import React from "react";
 import { images } from "@/app/utils";
 import Image from "next/image";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
 export default function Page() {
+  const router = useRouter();
   return (
     <div className="h-screen w-screen text-white flex flex-col items-center justify-center p-6 relative">
       {/* Glassmorphic Container */}
@@ -60,12 +62,14 @@ export default function Page() {
         </div>
 
         {/* Submit Button */}
-        <Link
-          href={"/share"}
+        <button
+          onClick={() => {
+            router.push("/share");
+          }}
           className="bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-6 rounded-lg w-full transition duration-300"
         >
           Save Profile
-        </Link>
+        </button>
 
         <p className="text-xs text-center text-white mt-4">
           "E don set! Profile don ready, share am make di jollof dey."
@@ -74,7 +78,7 @@ export default function Page() {
 
       {/* Background Image */}
       <Image
-        className="absolute h-full w-full object-cover top-0 left-0 -z-10"
+        className="absolute  h-full w-full object-cover top-0 left-0 z-10"
         src={images.bac}
         alt=""
       />

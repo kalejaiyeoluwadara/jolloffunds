@@ -11,6 +11,12 @@
 .Degular {
   font-family: "Degular", sans-serif;
 }
-*{
-  @apply Degular
+* {
+  @apply Degular;
+}
+body {
+  @apply bg-black;
+}
+html {
+  @apply bg-black;
 }
