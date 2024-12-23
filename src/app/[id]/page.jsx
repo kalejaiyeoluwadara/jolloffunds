@@ -78,7 +78,16 @@ export default function UserPage() {
     );
   }
 
-  const { username, bankName, accountNumber } = profile || {};
+  const { username, bankName, accountNumber, dp } = profile || {}; // Include dp (avatar index)
+
+  // Define avatars (images.hero1, images.hero2, etc.)
+  const avatars = [
+    images.hero1,
+    images.hero2,
+    images.hero3,
+    images.hero4,
+    images.twale,
+  ];
 
   return (
     <AnimatePresence mode="wait">
@@ -105,8 +114,8 @@ export default function UserPage() {
           <div className="flex items-center flex-col w-full justify-center gap-3 mb-6">
             <Image
               className="h-[90px] w-[90px] rounded-full object-center"
-              src={images.hero}
-              alt="bac"
+              src={avatars[dp] || images.hero1} // Use dp to select the avatar
+              alt="Profile"
             />
             <h1 className="text-2xl font-bold text-white">@{username}</h1>
           </div>

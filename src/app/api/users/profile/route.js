@@ -1,5 +1,6 @@
 import { connect } from "@/dbConfig/dbConfig"; // Import the MongoDB connection function
 import User from "@/model/user"; // Import the User model (corrected)
+import { Diplomata_SC } from "next/font/google";
 import { NextResponse } from "next/server";
 
 // Ensure MongoDB is connected once at the top
@@ -9,7 +10,7 @@ await connect(); // This will establish a connection before any handler executes
 export async function POST(req) {
   try {
     const body = await req.json(); // Parse the JSON body
-    const { username, bankName, accountNumber } = body;
+    const { username, bankName, accountNumber, dp } = body;
 
     // Validate input
     if (!username || !bankName || !accountNumber) {
@@ -31,7 +32,7 @@ export async function POST(req) {
     }
 
     // Create new profile (user)
-    const newUser = new User({ username, bankName, accountNumber });
+    const newUser = new User({ username, bankName, accountNumber, dp });
     await newUser.save();
 
     return NextResponse.json(
@@ -137,7 +138,7 @@ export async function DELETE(req) {
       );
     }
 
-    await user.remove();
+    await user.deleteOne();
 
     return NextResponse.json(
       { message: "Profile deleted successfully!" },

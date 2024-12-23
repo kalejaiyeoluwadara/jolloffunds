@@ -11,11 +11,12 @@ import { useGlobal } from "../context";
 export default function Page() {
   const router = useRouter();
 
-  // State for form fields and loading
+  // State for form fields, loading, and dp (profile picture)
   const [username, setUsername] = useState("");
   const [bankName, setBankName] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [dp, setDp] = useState(0); // State for dp (profile picture)
   const { setUserName: setGlobalUsername } = useGlobal();
 
   // Function to handle form submission
@@ -35,6 +36,7 @@ export default function Page() {
         username,
         bankName,
         accountNumber,
+        dp, // Sending dp to backend
       });
 
       if (response.status === 201) {
@@ -115,6 +117,36 @@ export default function Page() {
             placeholder="1234567890"
             className="w-full bg-gray-100 text-gray-800 border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-500"
           />
+        </div>
+
+        {/* DP Avatar Selection */}
+        <div className="flex justify-center gap-4 mb-6">
+          {[
+            images.hero,
+            images.hero2,
+            images.hero3,
+            images.twale,
+            images.hero4,
+          ].map((avatar, index) => (
+            <div
+              key={index}
+              onClick={() => setDp(index)}
+              className={`w-12 flex-shrink-0 h-12 rounded-full cursor-pointer relative ${
+                dp === index ? "border-4 border-green-500" : ""
+              }`}
+            >
+              <Image
+                src={avatar}
+                alt={`Avatar ${index + 1}`}
+                className="w-full h-full rounded-full object-cover"
+              />
+              {dp === index && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-white text-xl">✓</span>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
 
         {/* Submit Button */}
