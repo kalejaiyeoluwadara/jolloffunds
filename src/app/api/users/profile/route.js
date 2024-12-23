@@ -116,7 +116,7 @@ export async function PATCH(req) {
     );
   }
 }
-
+// please just work
 // DELETE handler to delete a profile by username
 export async function DELETE(req) {
   try {
