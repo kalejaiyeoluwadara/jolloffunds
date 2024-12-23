@@ -7,12 +7,11 @@ import { FaCheckCircle } from "react-icons/fa";
 import { FiCopy } from "react-icons/fi";
 import toast, { Toaster } from "react-hot-toast";
 import Link from "next/link";
-
+import { useGlobal } from "../context";
 export default function SuccessPage() {
-  const username = "your_username"; // Replace dynamically with the actual username
-
+  const { userName, setUsername: setGlobal } = useGlobal();
   const copyToClipboard = () => {
-    const link = `https://jolloffunds.vercel.app/${username}`;
+    const link = `https://jolloffunds.vercel.app/${userName}`;
     navigator.clipboard.writeText(link);
     toast.success("Copied Link! start sharing🎉", {
       icon: "🔥",
@@ -43,12 +42,12 @@ export default function SuccessPage() {
         <div className="bg-green-100 text-black p-4 rounded-lg shadow-md flex items-center justify-between gap-3 mb-4">
           <p className="text-lg truncate">
             <Link
-              href={`https://jolloffunds.vercel.app/${username}`}
+              href={`https://jolloffunds.vercel.app/${userName}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-400 underline"
             >
-              jolloffunds/{username}
+              jolloffunds/{userName}
             </Link>
           </p>
           <button

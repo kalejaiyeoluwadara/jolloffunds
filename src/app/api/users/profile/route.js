@@ -1,6 +1,9 @@
+import { connect } from "@/dbConfig/dbConfig"; // Import the MongoDB connection function
+import User from "@/model/user"; // Import the User model (corrected)
 import { NextResponse } from "next/server";
 
-let profiles = []; // In-memory storage for profiles (replace with DB later)
+// Ensure MongoDB is connected once at the top
+await connect(); // This will establish a connection before any handler executes
 
 // POST handler to create a new profile
 export async function POST(req) {
@@ -19,25 +22,24 @@ export async function POST(req) {
     }
 
     // Check for duplicate username
-    const existingProfile = profiles.find(
-      (profile) => profile.username === username
-    );
-    if (existingProfile) {
+    const existingUser = await User.findOne({ username }); // Use User model here
+    if (existingUser) {
       return NextResponse.json(
         { error: "Username already exists!" },
         { status: 409 } // Conflict
       );
     }
 
-    // Create new profile
-    const newProfile = { username, bankName, accountNumber };
-    profiles.push(newProfile);
+    // Create new profile (user)
+    const newUser = new User({ username, bankName, accountNumber });
+    await newUser.save();
 
     return NextResponse.json(
-      { message: "Profile created successfully!", profile: newProfile },
+      { message: "Profile created successfully!", user: newUser }, // Return the new user
       { status: 201 }
     );
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       { error: "Something went wrong. Please try again later." },
       { status: 500 }
@@ -51,25 +53,23 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const username = searchParams.get("username"); // Extract the username query parameter
 
-    // Validate input
-    if (!username) {
-      return NextResponse.json(
-        { error: "Username query parameter is required!" },
-        { status: 400 }
-      );
+    if (username) {
+      const user = await User.findOne({ username }); // Use User model here
+      if (!user) {
+        return NextResponse.json(
+          { error: "Profile not found!" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json({ user }, { status: 200 }); // Return the user
     }
 
-    // Find the profile
-    const profile = profiles.find((profile) => profile.username === username);
-    if (!profile) {
-      return NextResponse.json(
-        { error: "Profile not found!" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({ profile }, { status: 200 });
+    // Fetch all users if no username query is present
+    const users = await User.find({});
+    return NextResponse.json({ users }, { status: 200 });
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       { error: "Something went wrong. Please try again later." },
       { status: 500 }
@@ -83,7 +83,6 @@ export async function PATCH(req) {
     const body = await req.json(); // Parse the JSON body
     const { username, bankName, accountNumber } = body;
 
-    // Validate input
     if (!username) {
       return NextResponse.json(
         { error: "Username is required for update!" },
@@ -91,24 +90,25 @@ export async function PATCH(req) {
       );
     }
 
-    // Find the profile
-    const profile = profiles.find((profile) => profile.username === username);
-    if (!profile) {
+    const user = await User.findOne({ username }); // Use User model here
+    if (!user) {
       return NextResponse.json(
         { error: "Profile not found!" },
         { status: 404 }
       );
     }
 
-    // Update the profile
-    if (bankName) profile.bankName = bankName;
-    if (accountNumber) profile.accountNumber = accountNumber;
+    if (bankName) user.bankName = bankName;
+    if (accountNumber) user.accountNumber = accountNumber;
+
+    await user.save();
 
     return NextResponse.json(
-      { message: "Profile updated successfully!", profile },
+      { message: "Profile updated successfully!", user }, // Return the updated user
       { status: 200 }
     );
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       { error: "Something went wrong. Please try again later." },
       { status: 500 }
@@ -120,9 +120,8 @@ export async function PATCH(req) {
 export async function DELETE(req) {
   try {
     const { searchParams } = new URL(req.url);
-    const username = searchParams.get("username"); // Extract the username query parameter
+    const username = searchParams.get("username");
 
-    // Validate input
     if (!username) {
       return NextResponse.json(
         { error: "Username query parameter is required!" },
@@ -130,24 +129,22 @@ export async function DELETE(req) {
       );
     }
 
-    // Find and remove the profile
-    const profileIndex = profiles.findIndex(
-      (profile) => profile.username === username
-    );
-    if (profileIndex === -1) {
+    const user = await User.findOne({ username }); // Use User model here
+    if (!user) {
       return NextResponse.json(
         { error: "Profile not found!" },
         { status: 404 }
       );
     }
 
-    profiles.splice(profileIndex, 1); // Remove the profile from the array
+    await user.remove();
 
     return NextResponse.json(
       { message: "Profile deleted successfully!" },
       { status: 200 }
     );
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       { error: "Something went wrong. Please try again later." },
       { status: 500 }

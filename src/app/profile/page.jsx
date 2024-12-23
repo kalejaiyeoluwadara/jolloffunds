@@ -1,13 +1,66 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { images } from "@/app/utils";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import { PuffLoader } from "react-spinners";
+import toast, { Toaster } from "react-hot-toast";
+import { useGlobal } from "../context";
+
 export default function Page() {
   const router = useRouter();
+
+  // State for form fields and loading
+  const [username, setUsername] = useState("");
+  const [bankName, setBankName] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { setUserName: setGlobalUsername } = useGlobal();
+
+  // Function to handle form submission
+  const handleSubmit = async () => {
+    // Validation: Ensure all fields are filled
+    if (!username || !bankName || !accountNumber) {
+      toast.error("Please fill in all fields!");
+      return;
+    }
+
+    // Show loading spinner
+    setIsLoading(true);
+
+    try {
+      // Sending POST request to create profile
+      const response = await axios.post("/api/users/profile", {
+        username,
+        bankName,
+        accountNumber,
+      });
+
+      if (response.status === 201) {
+        // On success, store the username globally and redirect
+        router.push("/share"); // Redirect to /share page
+        toast.success("Profile created successfully!");
+        setGlobalUsername(username); // Set the username in global state
+      }
+    } catch (error) {
+      // Handle error (network issues, server issues, etc.)
+      if (error.response) {
+        // Server responded with a status code outside of the range [200-299]
+        toast.error(
+          `Error: ${error.response.data.error || "Something went wrong"}`
+        );
+      }
+    } finally {
+      // Hide loading spinner once the request is complete
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="h-screen w-screen text-white flex flex-col items-center justify-center p-6 relative">
+      <Toaster position="top-center" />
+
       {/* Glassmorphic Container */}
       <div className="bg-white bg-opacity-20 backdrop-blur-md border border-white border-opacity-30 relative z-50 text-white rounded-lg shadow-lg p-6 max-w-md w-full">
         <h1 className="text-2xl font-bold text-center mb-4">
@@ -26,6 +79,8 @@ export default function Page() {
             <input
               type="text"
               id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               placeholder="@your_username"
               className="w-full bg-gray-100 text-gray-800 border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-red-500"
             />
@@ -40,6 +95,8 @@ export default function Page() {
           <input
             type="text"
             id="bank"
+            value={bankName}
+            onChange={(e) => setBankName(e.target.value)}
             placeholder="E.g., Access Bank"
             className="w-full bg-gray-100 text-gray-800 border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
@@ -53,6 +110,8 @@ export default function Page() {
           <input
             type="text"
             id="account"
+            value={accountNumber}
+            onChange={(e) => setAccountNumber(e.target.value)}
             placeholder="1234567890"
             className="w-full bg-gray-100 text-gray-800 border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-500"
           />
@@ -60,12 +119,16 @@ export default function Page() {
 
         {/* Submit Button */}
         <button
-          onClick={() => {
-            router.push("/share");
-          }}
+          onClick={handleSubmit}
           className="bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-6 rounded-lg w-full transition duration-300"
         >
-          Save Profile
+          {isLoading ? (
+            <div className="flex justify-center items-center">
+              <PuffLoader size={24} color="#fff" />
+            </div>
+          ) : (
+            "Save Profile"
+          )}
         </button>
 
         <p className="text-xs text-center text-white mt-4">
