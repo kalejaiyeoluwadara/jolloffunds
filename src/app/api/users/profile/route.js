@@ -1,10 +1,9 @@
 import { connect } from "@/dbConfig/dbConfig"; // Import the MongoDB connection function
 import User from "@/model/user"; // Import the User model (corrected)
-import { Diplomata_SC } from "next/font/google";
 import { NextResponse } from "next/server";
 
 // Ensure MongoDB is connected once at the top
-await connect(); // This will establish a connection before any handler executes
+// await connect();
 
 // POST handler to create a new profile
 export async function POST(req) {
