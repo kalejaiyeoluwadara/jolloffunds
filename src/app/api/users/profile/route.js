@@ -3,10 +3,10 @@ import User from "@/model/user"; // Import the User model (corrected)
 import { NextResponse } from "next/server";
 
 // Ensure MongoDB is connected once at the top
-// await connect();
 
 // POST handler to create a new profile
 export async function POST(req) {
+  await connect();
   try {
     const body = await req.json(); // Parse the JSON body
     const { username, bankName, accountNumber, dp } = body;
@@ -49,6 +49,7 @@ export async function POST(req) {
 
 // GET handler to fetch details by username
 export async function GET(req) {
+  await connect();
   try {
     const { searchParams } = new URL(req.url);
     const username = searchParams.get("username"); // Extract the username query parameter
@@ -79,6 +80,7 @@ export async function GET(req) {
 
 // PATCH handler to update a profile by username
 export async function PATCH(req) {
+  await connect();
   try {
     const body = await req.json(); // Parse the JSON body
     const { username, bankName, accountNumber } = body;
@@ -118,6 +120,7 @@ export async function PATCH(req) {
 // please just work
 // DELETE handler to delete a profile by username
 export async function DELETE(req) {
+  await connect();
   try {
     const { searchParams } = new URL(req.url);
     const username = searchParams.get("username");
