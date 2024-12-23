@@ -1,20 +1,22 @@
 import mongoose from "mongoose";
 
-let isConnected = false; // Keep track of whether we're connected
+let isConnected = false; // To track the connection state
 
 export async function connect() {
   if (isConnected) {
-    console.log("Already connected to MongoDB");
+    console.log("MongoDB is already connected");
     return;
   }
 
   try {
-    // Connect to the database only if not already connected
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
     isConnected = true;
     console.log("MongoDB connected!");
   } catch (error) {
-    console.log("MongoDB connection error!", error);
-    process.exit(1); // Exit process if the connection fails
+    console.error("MongoDB connection error:", error);
+    throw new Error("Could not connect to MongoDB");
   }
 }

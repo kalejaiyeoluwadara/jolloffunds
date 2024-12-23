@@ -1,12 +1,12 @@
 import { connect } from "@/dbConfig/dbConfig"; // Import the MongoDB connection function
-import User from "@/model/user"; // Import the User model (corrected)
+import User from "@/model/user"; // Import the User model
 import { NextResponse } from "next/server";
-connect();
-// Ensure MongoDB is connected once at the top
 
-// POST handler to create a new profile
 export async function POST(req) {
   try {
+    // Ensure MongoDB is connected for every request
+    await connect();
+
     const body = await req.json(); // Parse the JSON body
     const { username, bankName, accountNumber, dp } = body;
 
@@ -21,11 +21,11 @@ export async function POST(req) {
     }
 
     // Check for duplicate username
-    const existingUser = await User.findOne({ username }); // Use User model here
+    const existingUser = await User.findOne({ username });
     if (existingUser) {
       return NextResponse.json(
         { error: "Username already exists!" },
-        { status: 409 } // Conflict
+        { status: 409 }
       );
     }
 
@@ -34,7 +34,7 @@ export async function POST(req) {
     await newUser.save();
 
     return NextResponse.json(
-      { message: "Profile created successfully!", user: newUser }, // Return the new user
+      { message: "Profile created successfully!", user: newUser },
       { status: 201 }
     );
   } catch (error) {
@@ -45,16 +45,16 @@ export async function POST(req) {
     );
   }
 }
-// /pages/api/users/profile.js
 
-// GET handler to fetch details by username
 export async function GET(req) {
   try {
+    await connect();
+
     const { searchParams } = new URL(req.url);
-    const username = searchParams.get("username"); // Extract the username query parameter
+    const username = searchParams.get("username");
 
     if (username) {
-      const user = await User.findOne({ username }); // Use User model here
+      const user = await User.findOne({ username });
       if (!user) {
         return NextResponse.json(
           { error: "Profile not found!" },
@@ -62,10 +62,9 @@ export async function GET(req) {
         );
       }
 
-      return NextResponse.json({ user }, { status: 200 }); // Return the user
+      return NextResponse.json({ user }, { status: 200 });
     }
 
-    // Fetch all users if no username query is present
     const users = await User.find({});
     return NextResponse.json({ users }, { status: 200 });
   } catch (error) {
@@ -77,10 +76,11 @@ export async function GET(req) {
   }
 }
 
-// PATCH handler to update a profile by username
 export async function PATCH(req) {
   try {
-    const body = await req.json(); // Parse the JSON body
+    await connect();
+
+    const body = await req.json();
     const { username, bankName, accountNumber } = body;
 
     if (!username) {
@@ -90,7 +90,7 @@ export async function PATCH(req) {
       );
     }
 
-    const user = await User.findOne({ username }); // Use User model here
+    const user = await User.findOne({ username });
     if (!user) {
       return NextResponse.json(
         { error: "Profile not found!" },
@@ -104,7 +104,7 @@ export async function PATCH(req) {
     await user.save();
 
     return NextResponse.json(
-      { message: "Profile updated successfully!", user }, // Return the updated user
+      { message: "Profile updated successfully!", user },
       { status: 200 }
     );
   } catch (error) {
@@ -115,10 +115,11 @@ export async function PATCH(req) {
     );
   }
 }
-// please just work
-// DELETE handler to delete a profile by username
+
 export async function DELETE(req) {
   try {
+    await connect();
+
     const { searchParams } = new URL(req.url);
     const username = searchParams.get("username");
 
@@ -129,7 +130,7 @@ export async function DELETE(req) {
       );
     }
 
-    const user = await User.findOne({ username }); // Use User model here
+    const user = await User.findOne({ username });
     if (!user) {
       return NextResponse.json(
         { error: "Profile not found!" },
