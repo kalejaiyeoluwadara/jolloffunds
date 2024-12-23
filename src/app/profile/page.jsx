@@ -32,12 +32,15 @@ export default function Page() {
 
     try {
       // Sending POST request to create profile
-      const response = await axios.post("/api/users/profile", {
-        username,
-        bankName,
-        accountNumber,
-        dp, // Sending dp to backend
-      });
+      const response = await axios.post(
+        "https://desserts-backend-u69l.onrender.com/api/users",
+        {
+          username,
+          bankName,
+          accountNumber,
+          dp, // Sending dp to backend
+        }
+      );
 
       if (response.status === 201) {
         // On success, store the username globally and redirect

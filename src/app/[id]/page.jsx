@@ -32,7 +32,7 @@ export default function UserPage() {
     setLoading(true);
     try {
       const response = await axios.get(
-        `/api/users/profile?username=${username}`
+        `https://desserts-backend-u69l.onrender.com/api/v1/users/${username}`
       ); // Make GET request to backend
       setProfile(response.data.user || {}); // Adjusted response handling to match "user"
       setLoading(false);
