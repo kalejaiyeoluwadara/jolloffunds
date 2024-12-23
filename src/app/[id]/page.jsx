@@ -32,7 +32,7 @@ export default function UserPage() {
     setLoading(true);
     try {
       const response = await axios.get(
-        `/api/users/profile?username=${username}`
+        `https://ygpt-five.vercel.app/api/users/profile?username=${username}`
       ); // Make GET request to backend
       setProfile(response.data.user || {}); // Adjusted response handling to match "user"
       setLoading(false);
