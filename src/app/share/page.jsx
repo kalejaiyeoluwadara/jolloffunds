@@ -1,5 +1,7 @@
 "use client";
 import React from "react";
+import { images } from "@/app/utils";
+import Image from "next/image";
 import { FaCheckCircle } from "react-icons/fa"; // React Icon for Success
 import { FiCopy } from "react-icons/fi"; // React Icon for Copy Link
 import Link from "next/link";
@@ -14,9 +16,9 @@ export default function SuccessPage() {
   return (
     <div className="h-screen w-screen bg-black text-white flex flex-col items-center justify-center p-6 relative">
       {/* Success Message */}
-      <div className="bg-green-100 bg-opacity-20 backdrop-blur-md border border-green-300 border-opacity-50 rounded-lg shadow-lg p-6 max-w-md w-full text-center">
-        <FaCheckCircle className="text-green-500 text-6xl mx-auto mb-4" />
-        <h1 className="text-2xl font-bold text-green-700 mb-2">
+      <div className="bg-green-100 relative z-50 bg-opacity-20 backdrop-blur-md border border-green-300 border-opacity-50 rounded-lg shadow-lg p-6 max-w-md w-full text-center">
+        <FaCheckCircle className="text-green-200 text-6xl mx-auto mb-4" />
+        <h1 className="text-2xl font-bold text-green-300 mb-2">
           Profile Don Set! 🎉
         </h1>
         <p className="text-white mb-4">
@@ -25,7 +27,7 @@ export default function SuccessPage() {
         </p>
 
         {/* Shareable Link */}
-        <div className="bg-white p-4 rounded-lg shadow-md flex items-center justify-between mb-4">
+        <div className="bg-green-200 p-4 rounded-lg shadow-md flex items-center justify-between mb-4">
           <button>
             <Link
               href={`/jolloffunds/${username}`}
@@ -48,8 +50,12 @@ export default function SuccessPage() {
         </button>
       </div>
 
-      {/* Background Layer */}
-      <div className="absolute inset-0 bg-green-50 -z-10"></div>
+      {/* Background Image */}
+      <Image
+        className="absolute  h-full w-full object-cover top-0 left-0 z-10"
+        src={images.aza2}
+        alt=""
+      />
     </div>
   );
 }
