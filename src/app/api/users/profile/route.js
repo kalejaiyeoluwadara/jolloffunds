@@ -1,17 +1,34 @@
 import { connect } from "@/dbConfig/dbConfig"; // Import the MongoDB connection function
-import User from "@/model/user"; // Import the User model (corrected)
+import User from "@/model/user"; // Import the User model
 import { NextResponse } from "next/server";
 
-// Ensure MongoDB is connected once at the top
+// Middleware to handle CORS
+function handleCORS(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", "*"); // Adjust '*' to specific domains in production
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,POST,PATCH,DELETE,OPTIONS"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  // Handle preflight requests
+  if (req.method === "OPTIONS") {
+    res.status(200).end();
+    return true; // Signal that the request has been handled
+  }
+  return false; // Proceed with the handler
+}
 
 // POST handler to create a new profile
 export async function POST(req) {
+  const res = NextResponse.next(); // Create a response object
+  if (handleCORS(req, res)) return res;
+
   await connect();
   try {
     const body = await req.json(); // Parse the JSON body
     const { username, bankName, accountNumber, dp } = body;
 
-    // Validate input
     if (!username || !bankName || !accountNumber) {
       return NextResponse.json(
         {
@@ -21,21 +38,19 @@ export async function POST(req) {
       );
     }
 
-    // Check for duplicate username
-    const existingUser = await User.findOne({ username }); // Use User model here
+    const existingUser = await User.findOne({ username });
     if (existingUser) {
       return NextResponse.json(
         { error: "Username already exists!" },
-        { status: 409 } // Conflict
+        { status: 409 }
       );
     }
 
-    // Create new profile (user)
     const newUser = new User({ username, bankName, accountNumber, dp });
     await newUser.save();
 
     return NextResponse.json(
-      { message: "Profile created successfully!", user: newUser }, // Return the new user
+      { message: "Profile created successfully!", user: newUser },
       { status: 201 }
     );
   } catch (error) {
@@ -49,13 +64,16 @@ export async function POST(req) {
 
 // GET handler to fetch details by username
 export async function GET(req) {
+  const res = NextResponse.next(); // Create a response object
+  if (handleCORS(req, res)) return res;
+
   await connect();
   try {
     const { searchParams } = new URL(req.url);
-    const username = searchParams.get("username"); // Extract the username query parameter
+    const username = searchParams.get("username");
 
     if (username) {
-      const user = await User.findOne({ username }); // Use User model here
+      const user = await User.findOne({ username });
       if (!user) {
         return NextResponse.json(
           { error: "Profile not found!" },
@@ -63,10 +81,9 @@ export async function GET(req) {
         );
       }
 
-      return NextResponse.json({ user }, { status: 200 }); // Return the user
+      return NextResponse.json({ user }, { status: 200 });
     }
 
-    // Fetch all users if no username query is present
     const users = await User.find({});
     return NextResponse.json({ users }, { status: 200 });
   } catch (error) {
@@ -80,9 +97,12 @@ export async function GET(req) {
 
 // PATCH handler to update a profile by username
 export async function PATCH(req) {
+  const res = NextResponse.next(); // Create a response object
+  if (handleCORS(req, res)) return res;
+
   await connect();
   try {
-    const body = await req.json(); // Parse the JSON body
+    const body = await req.json();
     const { username, bankName, accountNumber } = body;
 
     if (!username) {
@@ -92,7 +112,7 @@ export async function PATCH(req) {
       );
     }
 
-    const user = await User.findOne({ username }); // Use User model here
+    const user = await User.findOne({ username });
     if (!user) {
       return NextResponse.json(
         { error: "Profile not found!" },
@@ -106,7 +126,7 @@ export async function PATCH(req) {
     await user.save();
 
     return NextResponse.json(
-      { message: "Profile updated successfully!", user }, // Return the updated user
+      { message: "Profile updated successfully!", user },
       { status: 200 }
     );
   } catch (error) {
@@ -117,9 +137,12 @@ export async function PATCH(req) {
     );
   }
 }
-// please just work
+
 // DELETE handler to delete a profile by username
 export async function DELETE(req) {
+  const res = NextResponse.next(); // Create a response object
+  if (handleCORS(req, res)) return res;
+
   await connect();
   try {
     const { searchParams } = new URL(req.url);
@@ -132,7 +155,7 @@ export async function DELETE(req) {
       );
     }
 
-    const user = await User.findOne({ username }); // Use User model here
+    const user = await User.findOne({ username });
     if (!user) {
       return NextResponse.json(
         { error: "Profile not found!" },
